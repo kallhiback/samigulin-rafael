@@ -17,26 +17,66 @@ gmailCheck.onclick = () => {
 
 
 
-function moveBlock(block, steps) {
-    if (steps === 0) {
-        return;
-    } else {
-        const smallBlock = block.querySelector('.child_block');
-        const leftPosition = parseInt(getComputedStyle(smallBlock).left);
-        const maxWidth = block.clientWidth - smallBlock.clientWidth;
+const box = document.querySelector('.child_block')
 
-        if (leftPosition < maxWidth) {
-            smallBlock.style.left = (leftPosition + 10) + 'px'
+let positionX = 0
+let positionY = 0
 
-            if (leftPosition + 10 < maxWidth) {
-                setTimeout(function() {
-                    moveBlock(block, steps - 1)
-                }, 100);
-            }
-        }
+const move = () => {
+    if (positionX < 448 && positionY === 0) {
+        positionX++
+        box.style.left = `${positionX}px`
+        setTimeout(move, 1)
+    } else if (positionX >= 448 && positionY < 448) {
+        positionY++
+        box.style.top = `${positionY}px`
+        setTimeout(move, 1)
+    } else if (positionX > 0 && positionY === 448) {
+        positionX--
+        box.style.left = `${positionX}px`
+        setTimeout(move, 1)
+    } else if (positionX >= 0 && positionY > 0) {
+        positionY--
+        box.style.top = `${positionY}px`
+        setTimeout(move, 1)
     }
 }
 
-const largeBlock = document.querySelector('.parent_block');
-moveBlock(largeBlock, 50)
+move()
 
+const seconds = document.querySelector('#seconds')
+const start = document.querySelector('#start')
+const stop = document.querySelector('#stop')
+const reset = document.querySelector('#reset')
+const resume = document.querySelector('#resume')
+let secondI = 0
+let intervalId
+
+function updateSeconds() {
+    secondI++
+    seconds.textContent = secondI
+}
+
+start.addEventListener("click", () => {
+    if (!intervalId) {
+        intervalId = setInterval(updateSeconds, 1000)
+    }
+})
+
+stop.addEventListener("click", () => {
+    clearInterval(intervalId)
+
+})
+
+reset.addEventListener("click", () => {
+    clearInterval(intervalId)
+    intervalId = null
+    secondI = 0
+    seconds.textContent = secondI
+})
+
+resume.addEventListener("click", () => {
+    if (intervalId) {
+        intervalId = setInterval(updateSeconds, 1000)
+    }
+})
